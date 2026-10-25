@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String               @id @default(cuid())
+  email        String               @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  settings     UserSettings?
+  created      Session[]            @relation("SessionCreator")
+  participations SessionParticipant[]
+}
+
+model Session {
+  id           String               @id @default(cuid())
+  roomCode     String               @unique
+  creatorId    String
+  creator      User                 @relation("SessionCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  status       String               @default("active")
+  startedAt    DateTime             @default(now())
+  endedAt      DateTime?
+  participants SessionParticipant[]
+  @@index([creatorId, startedAt])
+}
+
+model SessionParticipant {
+  id        String   @id @default(cuid())
+  sessionId String
+  userId    String?
+  displayName String
+  joinedAt  DateTime @default(now())
+  leftAt    DateTime?
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([sessionId, joinedAt])
+}
+
+model UserSettings {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  cameraId    String?
+  microphoneId String?
+  holoIntensity Int   @default(72)
+  captions    Boolean @default(false)
+  theme       String  @default("dark")
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

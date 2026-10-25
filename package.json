@@ -1,0 +1,26 @@
+{
+  "name": "holoconnect-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"npm run dev -w @holoconnect/web\" \"npm run dev -w @holoconnect/api\"",
+    "build": "npm run build -w @holoconnect/web && npm run build -w @holoconnect/api",
+    "db:generate": "prisma generate --schema prisma/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema prisma/schema.prisma",
+    "db:deploy": "prisma migrate deploy --schema prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prisma": "^6.4.1",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.1.1",
+    "@prisma/client": "^6.19.3"
+  }
+}
