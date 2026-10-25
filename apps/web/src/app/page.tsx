@@ -108,12 +108,15 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
       const scale = Math.min(1, 640 / videoWidth), width = Math.max(1, Math.round(videoWidth * scale)), height = Math.max(1, Math.round(videoHeight * scale));
       if (source.width !== width || source.height !== height) { source.width = width; source.height = height; }
       sourceCtx.clearRect(0, 0, width, height);
+      sourceCtx.filter = "saturate(.62) contrast(1.16) brightness(1.12)";
       sourceCtx.drawImage(video, 0, 0, width, height);
+      sourceCtx.filter = "none";
 
+      let maskApplied = false;
       if (effects && segmenter) {
         try {
           const mask = segmentPerson(segmenter, video, media, now);
-          setMaskState("BACKGROUND REMOVED · ON DEVICE");
+          setMaskState("HOLOGRAM ACTIVE · CUTOUT LIVE");
           if (mask !== lastMask || maskCanvas.width !== mask.width || maskCanvas.height !== mask.height) {
             maskCanvas.width = mask.width; maskCanvas.height = mask.height;
             const rgba = new Uint8ClampedArray(mask.width * mask.height * 4);
@@ -127,9 +130,10 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
           sourceCtx.globalCompositeOperation = "destination-in";
           sourceCtx.drawImage(maskCanvas, 0, 0, width, height);
           sourceCtx.globalCompositeOperation = "source-atop";
-          sourceCtx.fillStyle = "rgba(24, 175, 220, .24)";
+          sourceCtx.fillStyle = "rgba(28, 205, 255, .4)";
           sourceCtx.fillRect(0, 0, width, height);
           sourceCtx.globalCompositeOperation = "source-over";
+          maskApplied = true;
         } catch (error) {
           sourceCtx.globalCompositeOperation = "source-over";
           console.error("Person segmentation frame failed", error);
@@ -139,6 +143,12 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
         }
       }
 
+      // Cyan phosphor tint keeps the image holographic even while the person mask loads.
+      sourceCtx.globalCompositeOperation = "source-atop";
+      sourceCtx.fillStyle = effects ? "rgba(37, 218, 255, .32)" : "rgba(37, 218, 255, .24)";
+      sourceCtx.fillRect(0, 0, width, height);
+      sourceCtx.globalCompositeOperation = "source-over";
+
       const ratio = Math.min(2, window.devicePixelRatio || 1), stageWidth = canvas.clientWidth, stageHeight = canvas.clientHeight;
       if (canvas.width !== Math.round(stageWidth * ratio) || canvas.height !== Math.round(stageHeight * ratio)) {
         canvas.width = Math.round(stageWidth * ratio); canvas.height = Math.round(stageHeight * ratio);
@@ -147,12 +157,32 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
       outputCtx.clearRect(0, 0, stageWidth, stageHeight);
       const boxX = stageWidth * 0.08, boxY = stageHeight * 0.03, boxWidth = stageWidth * 0.84, boxHeight = stageHeight * 0.9;
       const fit = Math.min(boxWidth / width, boxHeight / height), drawWidth = width * fit, drawHeight = height * fit;
+      const drawX = boxX + (boxWidth - drawWidth) / 2, drawY = boxY + (boxHeight - drawHeight) / 2;
       outputCtx.save();
-      outputCtx.globalAlpha = effects ? 0.96 : 0.86;
-      outputCtx.filter = "saturate(1.18) contrast(1.08)";
-      outputCtx.shadowColor = "rgba(63, 228, 255, .62)";
-      outputCtx.shadowBlur = 14 * (intensity / 70);
-      outputCtx.drawImage(source, boxX + (boxWidth - drawWidth) / 2, boxY + (boxHeight - drawHeight) / 2, drawWidth, drawHeight);
+      outputCtx.globalCompositeOperation = "screen";
+      outputCtx.globalAlpha = maskApplied ? 0.24 : 0.12;
+      outputCtx.filter = "hue-rotate(12deg) saturate(1.8) brightness(1.3)";
+      outputCtx.drawImage(source, drawX - 5, drawY + 2, drawWidth, drawHeight);
+      outputCtx.globalAlpha = maskApplied ? 0.18 : 0.1;
+      outputCtx.filter = "hue-rotate(-14deg) saturate(1.7) brightness(1.2)";
+      outputCtx.drawImage(source, drawX + 5, drawY - 2, drawWidth, drawHeight);
+      outputCtx.restore();
+
+      outputCtx.save();
+      outputCtx.globalCompositeOperation = "screen";
+      outputCtx.globalAlpha = effects ? 0.9 : 0.78;
+      outputCtx.filter = "saturate(1.65) contrast(1.22) brightness(1.22)";
+      outputCtx.shadowColor = "rgba(47, 229, 255, .95)";
+      outputCtx.shadowBlur = 22 * (intensity / 70);
+      outputCtx.drawImage(source, drawX, drawY, drawWidth, drawHeight);
+      outputCtx.restore();
+
+      outputCtx.save();
+      outputCtx.globalCompositeOperation = "screen";
+      outputCtx.globalAlpha = 0.46;
+      outputCtx.fillStyle = "rgba(86, 245, 255, .72)";
+      const sweepY = boxY + ((now * 0.035) % boxHeight);
+      outputCtx.fillRect(boxX, sweepY, boxWidth, 1.25);
       outputCtx.restore();
     };
 
