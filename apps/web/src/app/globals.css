@@ -42,10 +42,10 @@
 .session-controls button.control-disabled{opacity:.42;cursor:not-allowed}
 @keyframes holo-volume-float{0%,100%{transform:translate3d(0,0,12px) rotateY(-14deg) rotateX(5deg)}50%{transform:translate3d(0,-5px,22px) rotateY(14deg) rotateX(2deg)}}
 @media(max-width:650px){.holo-frame{width:68%;height:70%}.holo-side{width:12px}.side-left{left:-12px}.side-right{right:-12px}}
-.holo-stage.effects-on .holo-frame{border-color:#86f8ffcc;box-shadow:0 0 36px #31d7ffad,inset 0 0 34px #31b8df50}
+.holo-stage.effects-on .holo-frame{border-color:#86f8ffbb;box-shadow:0 0 24px #31d7ff7a,inset 0 0 25px #31b8df38}
 .holo-stage.effects-on .holo-video-wrap{background:radial-gradient(ellipse at 50% 42%,#27c9f33d,transparent 58%),linear-gradient(180deg,#07182318,#07111d88)}
-.holo-stage.effects-on .holo-cutout-canvas{opacity:.94;filter:saturate(1.85) contrast(1.25) brightness(1.22) drop-shadow(0 0 18px #4ceeff) drop-shadow(0 0 34px #21b8ffb5) drop-shadow(5px 2px 0 #4ceeff70) drop-shadow(10px 5px 0 #1784bf40);animation:holo-phosphor-flicker 5.4s steps(1,end) infinite}
-.holo-stage.effects-off .holo-cutout-canvas{opacity:.78;filter:saturate(1.55) contrast(1.18) brightness(1.12) drop-shadow(0 0 14px #4ceeffaa)}
+.holo-stage.effects-on .holo-cutout-canvas{opacity:.94;mix-blend-mode:normal;filter:saturate(1.3) contrast(1.1) brightness(1.04) drop-shadow(0 0 12px #4ceeffa0) drop-shadow(0 0 24px #21b8ff55) drop-shadow(3px 1px 0 #4ceeff45) drop-shadow(6px 3px 0 #1784bf22);animation:holo-phosphor-flicker 5.4s steps(1,end) infinite}
+.holo-stage.effects-off .holo-cutout-canvas{opacity:.9;mix-blend-mode:normal;filter:saturate(1.2) contrast(1.08) brightness(1.02) drop-shadow(0 0 10px #4ceeff88)}
 .holo-stage.effects-on .holo-side{background:linear-gradient(90deg,#5cf4ffb0,#70efff20);box-shadow:0 0 18px #22d8ff72}
 .holo-stage .scanlines{background:repeating-linear-gradient(0deg,#9af8ff3d 0 1px,transparent 1px 4px);mix-blend-mode:screen;opacity:calc(var(--scan,.52) + .14)}
 .holo-stage .holo-shimmer{background:linear-gradient(transparent,#55edff32,transparent)}

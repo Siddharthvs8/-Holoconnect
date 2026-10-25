@@ -108,7 +108,7 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
       const scale = Math.min(1, 640 / videoWidth), width = Math.max(1, Math.round(videoWidth * scale)), height = Math.max(1, Math.round(videoHeight * scale));
       if (source.width !== width || source.height !== height) { source.width = width; source.height = height; }
       sourceCtx.clearRect(0, 0, width, height);
-      sourceCtx.filter = "saturate(.62) contrast(1.16) brightness(1.12)";
+      sourceCtx.filter = "saturate(.86) contrast(1.08) brightness(1.04)";
       sourceCtx.drawImage(video, 0, 0, width, height);
       sourceCtx.filter = "none";
 
@@ -129,10 +129,6 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
           }
           sourceCtx.globalCompositeOperation = "destination-in";
           sourceCtx.drawImage(maskCanvas, 0, 0, width, height);
-          sourceCtx.globalCompositeOperation = "source-atop";
-          sourceCtx.fillStyle = "rgba(28, 205, 255, .4)";
-          sourceCtx.fillRect(0, 0, width, height);
-          sourceCtx.globalCompositeOperation = "source-over";
           maskApplied = true;
         } catch (error) {
           sourceCtx.globalCompositeOperation = "source-over";
@@ -143,9 +139,9 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
         }
       }
 
-      // Cyan phosphor tint keeps the image holographic even while the person mask loads.
+      // Tint lightly so the face stays recognizable while the background is removed.
       sourceCtx.globalCompositeOperation = "source-atop";
-      sourceCtx.fillStyle = effects ? "rgba(37, 218, 255, .32)" : "rgba(37, 218, 255, .24)";
+      sourceCtx.fillStyle = effects ? "rgba(37, 190, 232, .18)" : "rgba(37, 190, 232, .12)";
       sourceCtx.fillRect(0, 0, width, height);
       sourceCtx.globalCompositeOperation = "source-over";
 
@@ -160,27 +156,27 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
       const drawX = boxX + (boxWidth - drawWidth) / 2, drawY = boxY + (boxHeight - drawHeight) / 2;
       outputCtx.save();
       outputCtx.globalCompositeOperation = "screen";
-      outputCtx.globalAlpha = maskApplied ? 0.24 : 0.12;
-      outputCtx.filter = "hue-rotate(12deg) saturate(1.8) brightness(1.3)";
-      outputCtx.drawImage(source, drawX - 5, drawY + 2, drawWidth, drawHeight);
-      outputCtx.globalAlpha = maskApplied ? 0.18 : 0.1;
-      outputCtx.filter = "hue-rotate(-14deg) saturate(1.7) brightness(1.2)";
-      outputCtx.drawImage(source, drawX + 5, drawY - 2, drawWidth, drawHeight);
+      outputCtx.globalAlpha = maskApplied ? 0.1 : 0.045;
+      outputCtx.filter = "hue-rotate(8deg) saturate(1.2) brightness(1.04)";
+      outputCtx.drawImage(source, drawX - 3, drawY + 1, drawWidth, drawHeight);
+      outputCtx.globalAlpha = maskApplied ? 0.06 : 0.025;
+      outputCtx.filter = "hue-rotate(-8deg) saturate(1.15) brightness(1.02)";
+      outputCtx.drawImage(source, drawX + 3, drawY - 1, drawWidth, drawHeight);
       outputCtx.restore();
 
       outputCtx.save();
-      outputCtx.globalCompositeOperation = "screen";
-      outputCtx.globalAlpha = effects ? 0.9 : 0.78;
-      outputCtx.filter = "saturate(1.65) contrast(1.22) brightness(1.22)";
-      outputCtx.shadowColor = "rgba(47, 229, 255, .95)";
-      outputCtx.shadowBlur = 22 * (intensity / 70);
+      outputCtx.globalCompositeOperation = "source-over";
+      outputCtx.globalAlpha = maskApplied ? 0.88 : 0.76;
+      outputCtx.filter = "saturate(1.18) contrast(1.08) brightness(1.04)";
+      outputCtx.shadowColor = "rgba(47, 229, 255, .7)";
+      outputCtx.shadowBlur = 13 * (intensity / 70);
       outputCtx.drawImage(source, drawX, drawY, drawWidth, drawHeight);
       outputCtx.restore();
 
       outputCtx.save();
       outputCtx.globalCompositeOperation = "screen";
-      outputCtx.globalAlpha = 0.46;
-      outputCtx.fillStyle = "rgba(86, 245, 255, .72)";
+      outputCtx.globalAlpha = 0.28;
+      outputCtx.fillStyle = "rgba(86, 225, 255, .5)";
       const sweepY = boxY + ((now * 0.035) % boxHeight);
       outputCtx.fillRect(boxX, sweepY, boxWidth, 1.25);
       outputCtx.restore();
