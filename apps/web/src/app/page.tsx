@@ -5,7 +5,7 @@ import { ArrowDownRight, ArrowRight, AudioLines, Camera, Check, ChevronDown, Cir
 import { io, Socket } from "socket.io-client";
 import type { ImageSegmenter } from "@mediapipe/tasks-vision";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === "production" ? "" : "http://localhost:4000");
 const SIGNAL = process.env.NEXT_PUBLIC_SIGNAL_URL || API;
 type Chat = { role: "assistant" | "user"; text: string };
 

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "api": {
+      "root": "apps/api",
+      "framework": "express",
+      "buildCommand": "cd ../.. && DATABASE_URL=postgresql://holo:holo@127.0.0.1:5432/holoconnect npm run db:generate && npm run build -w @holoconnect/api"
+    },
+    "web": {
+      "root": "apps/web",
+      "framework": "nextjs",
+      "buildCommand": "cd ../.. && npm run build -w @holoconnect/web"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/socket.io/(.*)", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
+}
