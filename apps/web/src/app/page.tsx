@@ -194,7 +194,7 @@ function Hologram({ media, intensity = 70, scan = 52, effects = true, active = t
         <video ref={videoRef} autoPlay muted playsInline className="holo-source-video"/>
         {media ? <canvas ref={canvasRef} className="holo-cutout-canvas" aria-label="Background removed holographic camera output"/> : <div className="holo-demo-person"><div className="demo-head"/><div className="demo-body"/><small>HOLOCONNECT · DEMO</small></div>}
         <div className="scanlines"/><div className="holo-shimmer"/>
-        <div className="holo-caption"><span className="live-dot"/> {media ? maskState : "DEMO FIGURE"} <span className="caption-divider"/> 3D PROJECTION</div>
+        <span className="sr-only" role="status">{media ? maskState : "Demo hologram"}</span>
       </div>
       <div className="holo-side side-left"/><div className="holo-side side-right"/>
     </div>
